@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/myapp.dir/src/main.cpp.o CMakeFiles/myapp.dir/src/ui.cpp.o -o myapp  /usr/lib/x86_64-linux-gnu/libpython3.12.so 

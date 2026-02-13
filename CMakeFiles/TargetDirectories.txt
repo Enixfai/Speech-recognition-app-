@@ -1,0 +1,3 @@
+/home/user/projects/AIlab/build/CMakeFiles/myapp.dir
+/home/user/projects/AIlab/build/CMakeFiles/edit_cache.dir
+/home/user/projects/AIlab/build/CMakeFiles/rebuild_cache.dir

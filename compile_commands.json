@@ -1,0 +1,14 @@
+[
+{
+  "directory": "/home/user/projects/AIlab/build",
+  "command": "/usr/bin/c++  -I/home/user/projects/AIlab/include -isystem /usr/include/python3.12 -std=c++23 -o CMakeFiles/myapp.dir/src/main.cpp.o -c /home/user/projects/AIlab/src/main.cpp",
+  "file": "/home/user/projects/AIlab/src/main.cpp",
+  "output": "CMakeFiles/myapp.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/user/projects/AIlab/build",
+  "command": "/usr/bin/c++  -I/home/user/projects/AIlab/include -isystem /usr/include/python3.12 -std=c++23 -o CMakeFiles/myapp.dir/src/ui.cpp.o -c /home/user/projects/AIlab/src/ui.cpp",
+  "file": "/home/user/projects/AIlab/src/ui.cpp",
+  "output": "CMakeFiles/myapp.dir/src/ui.cpp.o"
+}
+]
