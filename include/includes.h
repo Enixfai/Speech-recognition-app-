@@ -3,12 +3,19 @@
 #include <vector>
 #include <string>
 #include <QWidget>
+#include <QApplication>
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QApplication>
 #include "file.h" 
-
-
+#include <QtWebSockets/QWebSocket>
+#include <QtMultimedia/QAudioSource>
+#include <QtMultimedia/QAudioFormat>
+#include <QProcess>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QTextEdit>
+#include <QString> 
 
 #pragma once

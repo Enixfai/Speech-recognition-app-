@@ -14,6 +14,8 @@ set(CMAKE_AUTORCC ON)
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
+find_package(Qt6 COMPONENTS Widgets WebSockets Multimedia REQUIRED)
+
 
 add_executable(myapp
 src/main.cpp
@@ -24,8 +26,10 @@ include/ui.h
 target_include_directories(myapp PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 target_link_libraries(myapp PRIVATE 
-pybind11::embed
-Qt::Widgets
+    pybind11::embed 
+    Qt6::Widgets 
+    Qt6::WebSockets 
+    Qt6::Multimedia
 )
 
 

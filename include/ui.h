@@ -1,20 +1,21 @@
-#include "includes.h"
-
-
-
-namespace py = pybind11;
+#pragma once
+#include <QWidget>
+#include <QPushButton>
+#include <QLabel>
+#include <QtWebSockets/QWebSocket>
 
 class MyWindow : public QWidget {
-    Q_OBJECT 
+    Q_OBJECT
 
 public:
-    MyWindow(py::module_& python_logic);
+    MyWindow(QWidget *parent = nullptr);
 
 private slots:
-    void onButtonClicked(); 
+    void onButtonClicked();
+    void onMessageReceived(const QString &message);
 
 private:
-    py::module_& logic;
-    QLabel* label;
-    QPushButton* button;
+    QPushButton *button;
+    QLabel *label;
+    QWebSocket *webSocket;
 };
