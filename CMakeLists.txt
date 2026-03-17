@@ -15,7 +15,7 @@ find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 find_package(pybind11 CONFIG REQUIRED)
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
 find_package(Qt6 COMPONENTS Widgets WebSockets Multimedia REQUIRED)
-
+find_package(Qt6 COMPONENTS Widgets WebSockets REQUIRED)
 
 add_executable(myapp
 src/main.cpp

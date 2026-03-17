@@ -1,39 +1,36 @@
 #include "ui.h"
-#include <QVBoxLayout>#include "ui.h"
-#include <QVBoxLayout>
+
+#include "includes.h"
 
 MyWindow::MyWindow(QWidget *parent) : QWidget(parent) {
-    auto *layout = new QVBoxLayout(this);
-    label = new QLabel("Ждем ответа...", this);
-    button = new QPushButton("Отправить 'Привет' в Питон", this);
+    auto layout = new QVBoxLayout(this);
+    m_btn = new QPushButton("Connect");
+    m_status = new QLabel("Status: Disconnected");
 
-    layout->addWidget(label);
-    layout->addWidget(button);
+    layout->addWidget(m_status);
+    layout->addWidget(  m_btn);
 
-    // 1. Создаем сокет
-    webSocket = new QWebSocket();
-    
-    // 2. Указываем, что делать, когда Питон пришлет ответ
-    connect(webSocket, &QWebSocket::textMessageReceived, this, &MyWindow::onMessageReceived);
+    m_socket = new QWebSocket();
 
-    // 3. Подключаемся к Питону (адрес должен совпадать с server.py)
-    webSocket->open(QUrl("ws://localhost:8765"));
+    connect(m_socket,&QWebSocket::connected,this,&MyWindow::onConnected);
+    connect(m_socket, &QWebSocket::textMessageReceived,this,&MyWindow::onTextMessage);
 
-    // 4. Настраиваем кнопку
-    connect(button, &QPushButton::clicked, this, &MyWindow::onButtonClicked);
+    connect(m_btn,&QPushButton::clicked, this , &MyWindow::onConnectionClicked);
 }
 
-void MyWindow::onButtonClicked() {
-    // Проверяем, есть ли связь
-    if (webSocket->isValid()) {
-        webSocket->sendTextMessage("Привет от C++!");
-        label->setText("Отправлено. Ждем...");
-    } else {
-        label->setText("Ошибка: Нет связи с сервером!");
-    }
+
+
+void MyWindow::onConnected(){
+    m_status->setText("Connected");
+    m_btn->setEnabled(false);
 }
 
-void MyWindow::onMessageReceived(const QString &message) {
-    // Когда Питон ответил, показываем это на экране
-    label->setText("Ответ Питона: " + message);
+void MyWindow::onTextMessage(QString msg){
+    qDebug() << "Server response:" <<msg;
+}
+
+
+void MyWindow::onConnectionClicked(){
+    m_status->setText("Connecting");
+    m_socket->open(QUrl("ws://localhost:8765"));
 }

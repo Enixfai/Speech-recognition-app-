@@ -17,5 +17,7 @@
 #include <QJsonObject>
 #include <QTextEdit>
 #include <QString> 
+#include <QDebug>
+
 
 #pragma once

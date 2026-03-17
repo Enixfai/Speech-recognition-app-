@@ -1,8 +1,7 @@
 #pragma once
-#include <QWidget>
-#include <QPushButton>
-#include <QLabel>
-#include <QtWebSockets/QWebSocket>
+
+
+#include "includes.h"
 
 class MyWindow : public QWidget {
     Q_OBJECT
@@ -11,11 +10,15 @@ public:
     MyWindow(QWidget *parent = nullptr);
 
 private slots:
-    void onButtonClicked();
-    void onMessageReceived(const QString &message);
+    void onConnectionClicked();
+    void onConnected();
+    void onTextMessage(QString msg);
+
+
 
 private:
-    QPushButton *button;
-    QLabel *label;
-    QWebSocket *webSocket;
+    QPushButton *m_btn;
+    QLabel *m_status;
+    
+    QWebSocket *m_socket;
 };

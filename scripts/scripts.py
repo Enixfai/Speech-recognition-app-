@@ -1,66 +1,3 @@
-"""
-Твоя задача — захватывать звук с микрофона и пересылать его сюда по веб-сокетам.
-Сервер всё переварит и вернет тебе текст или готовый отчет.
-
-1. ЧТО ТЕБЕ НУЖНО В QT:
------------------------
-В .pro файле (или CMake) добавь модули: websockets, multimedia, network.
-Для работы с сокетами используй класс `QWebSocket`.
-
-2. КАК НАСТРОИТЬ АУДИО (ЭТО ВАЖНО!):
-------------------------------------
-Whisper — привередливый. Ему нужен звук строго в формате PCM 16кГц, моно, 16 бит.
-Настрой `QAudioFormat` так:
-    format.setSampleRate(16000);
-    format.setChannelCount(1);
-    format.setSampleFormat(QAudioFormat::Int16); // Это PCM 16-bit
-
-Для захвата используй `QAudioSource` (в Qt6) или `QAudioInput` (в Qt5).
-Читай данные через `readAll()` и сразу кидай их в сокет.
-
-3. КАК ОБЩАТЬСЯ С СЕРВЕРОМ:
----------------------------
-Адрес: ws://localhost:8765
-
-А) ШЛЁШЬ ЗВУК:
-   Просто отправляй сырые байты как бинарное сообщение:
-   `socket->sendBinaryMessage(audioByteArray);`
-   Делай это часто (раз в 100-200 мс), чтобы юзер видел текст почти сразу.
-
-Б) ШЛЁШЬ КОМАНДЫ (JSON):
-   Когда нужно что-то сделать, шли текстовое сообщение:
-   - Чтобы завершить текущую фразу и очистить буфер: 
-     {"command": "stop_audio"}
-   - Чтобы получить финальный отчет по всему совещанию: 
-     {"command": "generate_protocol", "text": "ТУТ_ВЕСЬ_НАКОПЛЕННЫЙ_ТЕКСТ"}
-
-4. ЧТО СЕРВЕР ПРИШЛЕТ ТЕБЕ:
----------------------------
-Лови сигнал `textMessageReceived` и парси JSON. Смотри на поле "status":
-
-   - "status": "partial" — Это промежуточный текст. Выводи его в UI каким-нибудь 
-     светлым цветом. Он будет постоянно обновляться, пока человек говорит.
-     
-   - "status": "final" — Человек закончил фразу. Этот текст уже окончательный. 
-     Сохраняй его в общую переменную совещания и выводи в основной лог.
-     
-   - "status": "processing" — ИИ начал генерировать отчет. Покажи юзеру какую-то 
-     анимацию загрузки, чтобы он не скучал.
-     
-   - "status": "protocol" — В поле "text" лежит готовый Markdown-отчет. 
-     Можешь сразу закинуть его в `QTextBrowser` — Qt отлично рендерит Markdown.
-
-5. ПРИМЕРНЫЙ ПЛАН РАБОТЫ (WORKFLOW):
-------------------------------------
-1. Запускаешь этот сервер из C++ через `QProcess`.
-2. Жмешь "Старт": открываешь сокет, запускаешь микрофон, шлешь байты.
-3. Сервер шлет "partial" -> ты обновляешь временную строчку в UI.
-4. Раз в 5-10 секунд или по тишине шлешь "stop_audio" -> сервер шлет "final" 
-   -> ты добавляешь это в общую историю совещания.
-5. Жмешь "Стоп": останавливаешь микрофон, шлешь "generate_protocol" + всю историю.
-6. Получаешь отчет.
-=========================================================================================
-"""
 
 import asyncio
 import websockets
@@ -70,14 +7,16 @@ import os
 from faster_whisper import WhisperModel
 from openai import AsyncOpenAI
 
-# --- НАСТРОЙКИ STT (Whisper) ---
+
 MODEL_SIZE = "small"
 SAMPLE_RATE = 16000 
 
-# --- НАСТРОЙКИ LLM (DeepSeek / Groq) ---
-LLM_API_KEY = os.getenv("LLM_API_KEY", "api_ключ") 
-LLM_BASE_URL = "https://api.deepseek.com"
-LLM_MODEL = "deepseek-chat"        
+
+
+##Erase the key
+LLM_API_KEY = os.getenv("LLM_API_KEY", "sk_ZQRX0YcezzF4gcSIK5h6WGdyb3FYPbKUVwptrNGvEUmjjxH") 
+LLM_BASE_URL = "https://api.groq.com/openai/v1"
+LLM_MODEL = "llama-3.3-70b-versatile"     
 
 print(f"[INIT] Загрузка модели STT ({MODEL_SIZE})...")
 model = WhisperModel(MODEL_SIZE, device="auto", compute_type="int8")
