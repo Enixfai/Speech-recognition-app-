@@ -18,6 +18,13 @@
 #include <QTextEdit>
 #include <QString> 
 #include <QDebug>
+#include <QFile>
+#include <QTimer>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QFileDialog>
+#include <QAudioDecoder>
+#include <QAudioBuffer>
 
 
 #pragma once
