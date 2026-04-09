@@ -1,4 +1,3 @@
-
 import asyncio
 import websockets
 import json
@@ -14,7 +13,7 @@ SAMPLE_RATE = 16000
 
 
 ##Erase the key
-LLM_API_KEY = os.getenv("LLM_API_KEY", "sk_ZQRX0YcezzF4gcSIK5h6WGdyb3FYPbKUVwptrNGvEUmjjxH") 
+LLM_API_KEY = os.getenv("LLM_API_KEY", "key") 
 LLM_BASE_URL = "https://api.groq.com/openai/v1"
 LLM_MODEL = "llama-3.3-70b-versatile"     
 

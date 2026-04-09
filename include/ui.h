@@ -14,6 +14,8 @@ private slots:
     void onConnected();
     void onTextMessage(QString msg);
     void onSendFileClicked();
+    void onMicClicked(); 
+    void onAudioReady();
 
 
 private:
@@ -21,4 +23,8 @@ private:
     QPushButton *f_btn;
     QLabel *m_status;
     QWebSocket *m_socket;
+     QPushButton *m_micBtn; 
+    QAudioSource *m_audioSource; 
+    QIODevice *m_audioDevice;    
+    bool m_isRecording = false;
 };

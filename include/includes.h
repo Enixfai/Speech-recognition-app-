@@ -25,6 +25,7 @@
 #include <QFileDialog>
 #include <QAudioDecoder>
 #include <QAudioBuffer>
-
+#include <memory>
+#include <QIODevice>
 
 #pragma once
