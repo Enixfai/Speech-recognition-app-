@@ -1,20 +1,74 @@
 #include "includes.h"
 #include "ui.h"
-
 MyWindow::MyWindow(QWidget *parent) : QWidget(parent) {
-    auto layout = new QVBoxLayout(this);
-    m_btn = new QPushButton("Connect");
-    m_status = new QLabel("Status: Disconnected");
-    f_btn = new QPushButton("Send mp3 file");
-    m_micBtn = new QPushButton("Start micro");
-    
-    layout->addWidget(m_micBtn);
-    layout->addWidget(m_status);
-    layout->addWidget(f_btn);
-    layout->addWidget(m_btn);
+    this->resize(650, 500);
+    this->setWindowTitle("AI Meeting Assistant");
+
+    auto *mainLayout = new QVBoxLayout(this);
+    mainLayout->setContentsMargins(25, 25, 25, 25); 
+    mainLayout->setSpacing(15); 
+
+    m_status = new QLabel("Ожидание подключения...", this);
+    m_status->setAlignment(Qt::AlignCenter); 
+
+    m_logWindow = new QTextEdit(this);
+    m_logWindow->setReadOnly(true); 
+    m_logWindow->setPlaceholderText("Здесь будет появляться текст распознавания и итоговый протокол...");
+
+    auto *btnLayout = new QHBoxLayout();
+    btnLayout->setSpacing(15);
+
+    m_btn = new QPushButton("Подключиться", this);
+    m_micBtn = new QPushButton("Микрофон", this);
+    f_btn = new QPushButton("Загрузить MP3", this);
+
+    btnLayout->addWidget(m_btn);
+    btnLayout->addWidget(m_micBtn);
+    btnLayout->addWidget(f_btn);
+
+    mainLayout->addWidget(m_status);
+    mainLayout->addWidget(m_logWindow, 1); 
+    mainLayout->addLayout(btnLayout);
+
+    QString styleSheet = R"(
+        QWidget {
+            background-color: #1e1e2e;
+            color: #cdd6f4;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 14px;
+        }
+        QLabel {
+            font-size: 16px;
+            font-weight: bold;
+            color: #a6e3a1; /* Светло-зеленый */
+        }
+        QTextEdit {
+            background-color: #181825;
+            border: 2px solid #313244;
+            border-radius: 10px;
+            padding: 10px;
+            color: #cdd6f4;
+            font-size: 15px;
+        }
+        QPushButton {
+            background-color: #89b4fa; /* Приятный синий */
+            color: #11111b;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: bold;
+        }
+        QPushButton:hover {
+            background-color: #b4befe; /* Цвет при наведении */
+        }
+        QPushButton:disabled {
+            background-color: #45475a;
+            color: #6c7086;
+        }
+    )";
+    this->setStyleSheet(styleSheet); 
 
     m_socket = new QWebSocket();
-
     connect(m_micBtn, &QPushButton::clicked, this, &MyWindow::onMicClicked);
 
     QAudioFormat format;
@@ -50,12 +104,16 @@ void MyWindow::onMicClicked() {
         m_isRecording = false;
         m_micBtn->setText("🎙 Старт микрофона");
         m_status->setText("Запись остановлена. Ждем финал...");
-
         m_audioSource->stop(); 
 
         QJsonObject cmd;
         cmd["command"] = "stop_audio";
         m_socket->sendTextMessage(QJsonDocument(cmd).toJson());
+
+        QJsonObject reportCmd;
+        reportCmd["command"] = "generate_protocol";
+        reportCmd["text"] = m_fullText; 
+        m_socket->sendTextMessage(QJsonDocument(reportCmd).toJson());
     }
 }
 
@@ -77,10 +135,7 @@ void MyWindow::onConnected() {
     m_status->setText("Connected");
     m_btn->setEnabled(false);
 }
-
 void MyWindow::onTextMessage(QString msg) {
-    qDebug() << "Server response:" << msg;
-
     QJsonDocument doc = QJsonDocument::fromJson(msg.toUtf8());
     QJsonObject obj = doc.object();
     
@@ -88,17 +143,27 @@ void MyWindow::onTextMessage(QString msg) {
     QString text = obj["text"].toString();
 
     if (status == "partial") {
-        m_status->setText("Распознаю: " + text);
+        m_status->setText("🎙 Распознаю...");
+        
+        m_logWindow->setHtml(m_fullText + "<font color='#a6adc8'><i>" + text + "</i></font>");
     } 
     else if (status == "final") {
-        m_status->setText("Результат: " + text);
+        m_status->setText("✅ Фраза записана");
+        
+        if (!text.trimmed().isEmpty()) {
+            m_fullText += "<b>Вы:</b> " + text + "<br><br>";
+        }
+        
+        m_logWindow->setHtml(m_fullText);
     }
     else if (status == "processing") {
-        m_status->setText("Нейросеть генерирует отчет...");
+        m_status->setText("⏳ Нейросеть генерирует Markdown отчет...");
+        m_logWindow->setHtml(m_fullText + "<br><i>Анализирую текст совещания...</i>");
     }
     else if (status == "protocol") {
-        m_status->setText("Отчет готов! Смотри в консоль.");
-        qDebug() << "=== ПРОТОКОЛ ===\n" << text;
+        m_status->setText("✅ Отчет готов!");
+        m_fullText = ""; 
+        m_logWindow->setMarkdown(text); 
     }
 }
 

@@ -27,4 +27,6 @@ private:
     QAudioSource *m_audioSource; 
     QIODevice *m_audioDevice;    
     bool m_isRecording = false;
+    QTextEdit *m_logWindow;
+      QString m_fullText;
 };

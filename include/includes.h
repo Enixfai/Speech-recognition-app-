@@ -6,6 +6,7 @@
 #include <QApplication>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QHBoxLayout> 
 #include <QLabel>
 #include <QApplication>
 #include "file.h" 
@@ -27,5 +28,6 @@
 #include <QAudioBuffer>
 #include <memory>
 #include <QIODevice>
+#include <QTextEdit>
 
 #pragma once
