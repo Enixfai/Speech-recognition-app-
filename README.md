@@ -95,6 +95,11 @@ cd build
 
 ---
 
+## 🎦 Демонстрация
+* **Ссылка на видео:** https://drive.google.com/file/d/1Bz7O9Ckrbm8BHTNKVBU1ZYWvBSCmXDrx/view?usp=drive_link
+
+---
+
 ## 🛠 Возможные проблемы
 * **`ModuleNotFoundError: No module named 'websockets'`**: Вы забыли активировать виртуальное окружение (`source venv/bin/activate`) перед запуском сервера.
 * **Connection refused**: Сервер на Питоне не запущен или еще не загрузил модель в память. Дождитесь надписи `Запуск WebSocket сервера`.
