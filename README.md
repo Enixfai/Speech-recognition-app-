@@ -38,7 +38,7 @@ sudo apt install build-essential cmake python3-venv python3-dev qt6-base-dev qt6
 
 ### 2. Клонирование репозитория
 ```bash
-git clone https://github.com/<твой_ник>/Speech-recognition-app-.git
+git clone https://github.com/<Enixfai>/Speech-recognition-app-.git
 cd Speech-recognition-app-
 ```
 
